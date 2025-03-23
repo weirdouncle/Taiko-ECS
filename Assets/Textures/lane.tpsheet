@@ -1,0 +1,36 @@
+#
+# Sprite sheet data for Unity.
+#
+# To import these sprites into your Unity project, download "TexturePackerImporter":
+# https://www.codeandweb.com/texturepacker/unity
+#
+# $TexturePacker:SmartUpdate:a501a0013858260ccbbaca14989c662a:058a2079559aa116629ceec40c5e1812:e51b5f933432302550f29583c05b0f32$
+#
+:format=40300
+:texture=lane.png
+:size=1732x956
+:pivotpoints=enabled
+:borders=disabled
+:alphahandling=ClearTransparentPixels
+
+1P_Background;1;35;666;352; 0.5;0.5; 0;0;0;0
+2P_Background;669;35;666;352; 0.5;0.5; 0;0;0;0
+Background_Main;541;717;947;130; 0.5;0.5; 0;0;0;0
+base;1337;3;336;384; 0.5;0.5; 0;0;0;0
+don_left;1490;655;168;192; 0.5;0.5; 0;0;0;0
+don_right;1;461;168;192; 0.5;0.5; 0;0;0;0
+ka_left;171;461;168;192; 0.5;0.5; 0;0;0;0
+ka_right;341;461;168;192; 0.5;0.5; 0;0;0;0
+lane;547;389;8;264; 0.5;0.5; 0;0;0;0
+lane_don;1;939;1422;16; 0.5;0.5; 0;0;0;0
+lane_expert;511;458;16;195; 0.5;0.5; 0;0;0;0
+lane_gogo;1;921;1422;16; 0.5;0.5; 0;0;0;0
+lane_ka;1;903;1422;16; 0.5;0.5; 0;0;0;0
+lane_master;529;458;16;195; 0.5;0.5; 0;0;0;0
+lane_yellow;1;885;1422;16; 0.5;0.5; 0;0;0;0
+nijiiro_1p_frame;557;389;498;264; 0.5;0.5; 0;0;0;0
+nijiiro_2p_frame;1057;389;498;264; 0.5;0.5; 0;0;0;0
+score_mask;1425;849;304;52; 0.5;0.5; 0;0;0;0
+Text_Expert;1;793;178;54; 0.5;0.5; 0;0;0;0
+Text_Master;181;793;178;54; 0.5;0.5; 0;0;0;0
+Text_Normal;361;793;178;54; 0.5;0.5; 0;0;0;0

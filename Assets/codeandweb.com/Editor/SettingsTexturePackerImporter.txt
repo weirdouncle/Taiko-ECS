@@ -1,0 +1,26 @@
+version: 2
+tpsheetFileNames:
+- Assets/codeandweb.com/Example/SpriteSheet/sprites.tpsheet
+- Assets/Resources/Texture/senotes.tpsheet
+- Assets/Textures/DifficultiesNijiiro.tpsheet
+- Assets/Textures/lane.tpsheet
+- Assets/Textures/localization.tpsheet
+- Assets/Textures/main_plate.tpsheet
+- Assets/Textures/Notes/Notes.tpsheet
+textureFileNames:
+- Assets/codeandweb.com/Example/SpriteSheet/sprites.png
+- Assets/Resources/Texture/senotes.png
+- Assets/Textures/DifficultiesNijiiro.png
+- Assets/Textures/lane.png
+- Assets/Textures/localization.png
+- Assets/Textures/main_plate.png
+- Assets/Textures/Notes/Notes.png
+normalmapFileNames:
+- Assets/codeandweb.com/Example/SpriteSheet/sprites_n.png
+- 
+- 
+- 
+- 
+- 
+- 
+enableDebugOutput: 0

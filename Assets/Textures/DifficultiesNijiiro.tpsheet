@@ -1,0 +1,20 @@
+#
+# Sprite sheet data for Unity.
+#
+# To import these sprites into your Unity project, download "TexturePackerImporter":
+# https://www.codeandweb.com/texturepacker/unity
+#
+# $TexturePacker:SmartUpdate:a7544aa1bb5f9400bf400d48cfe33c44:150b88fe72128d51ae5e12aa028dcad7:8cad95743c022649287d68fad21c8b7a$
+#
+:format=40300
+:texture=DifficultiesNijiiro.png
+:size=572x116
+:pivotpoints=enabled
+:borders=disabled
+:alphahandling=ClearTransparentPixels
+
+lv1;1;3;112;112; 0.5;0.5; 0;0;0;0
+lv2;115;3;112;112; 0.5;0.5; 0;0;0;0
+lv3;229;3;112;112; 0.5;0.5; 0;0;0;0
+lv4;343;3;112;112; 0.5;0.5; 0;0;0;0
+lv5;457;3;112;112; 0.5;0.5; 0;0;0;0

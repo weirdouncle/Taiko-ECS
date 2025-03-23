@@ -1,0 +1,28 @@
+#
+# Sprite sheet data for Unity.
+#
+# To import these sprites into your Unity project, download "TexturePackerImporter":
+# https://www.codeandweb.com/texturepacker/unity
+#
+# $TexturePacker:SmartUpdate:ca5d26dbb74cc7e5b830c93e77fb4d5c:3a661b079122df4ce5cc006c09b99508:2fad2fbcd2d180feae2c6a226e6d20ab$
+#
+:format=40300
+:texture=main_plate.png
+:size=1008x340
+:pivotpoints=enabled
+:borders=disabled
+:alphahandling=ClearTransparentPixels
+
+0;1;267;68;72; 0.5;0.17999999999999994; 0;0;0;0
+1;71;267;68;72; 0.5;0.17999999999999994; 0;0;0;0
+2;141;267;68;72; 0.5;0.17999999999999994; 0;0;0;0
+3;211;267;68;72; 0.5;0.17999999999999994; 0;0;0;0
+4;281;267;68;72; 0.5;0.17999999999999994; 0;0;0;0
+5;351;267;68;72; 0.5;0.17999999999999994; 0;0;0;0
+6;421;267;68;72; 0.5;0.17999999999999994; 0;0;0;0
+7;491;267;68;72; 0.5;0.17999999999999994; 0;0;0;0
+8;561;267;68;72; 0.5;0.17999999999999994; 0;0;0;0
+9;631;267;68;72; 0.5;0.17999999999999994; 0;0;0;0
+lane_1p;1;1;498;264; 0.5;0.5; 0;0;0;0
+lane_2p;501;1;498;264; 0.5;0.5; 0;0;0;0
+score_mask;701;285;305;54; 0.5;0.5; 0;0;0;0
