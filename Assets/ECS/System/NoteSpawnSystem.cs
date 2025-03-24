@@ -5,6 +5,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Rendering;
 using Unity.Transforms;
+using UnityEngine;
 using UnityEngine.Rendering;
 
 partial struct NoteSpawnSystem : ISystem
@@ -24,8 +25,6 @@ partial struct NoteSpawnSystem : ISystem
         {
             foreach (NoteChip chip in LoaderScript.Notes.Values)
             {
-
-
                 NoteMove move = new NoteMove
                 {
                     Index = chip.Index,
@@ -33,7 +32,7 @@ partial struct NoteSpawnSystem : ISystem
                     Chapter = chip.Chapter,
                     JudgeTime = chip.JudgeTime,
                     MidTime = chip.MidTime,
-                    EndTime = chip.MidTime,
+                    EndTime = chip.EndTime,
                     BranchRelated = chip.BranchRelated,
                     Branch = chip.Branch,
                     Bpm = chip.Bpm,
@@ -64,6 +63,7 @@ partial struct NoteSpawnSystem : ISystem
                         note_pre = (note.BigKaImage);
                         break;
                     case 5:
+                        Debug.Log(chip.Type);
                         note_pre = (note.RapidImage);
                         break;
                     case 6:

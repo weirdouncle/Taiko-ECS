@@ -60,7 +60,7 @@ Material:
     - _Clip: 0.5
     - _Cutoff: 0.01
     - _EnableExternalAlpha: 0
-    - _Frame: 1
+    - _Frame: 0
     - _QueueControl: 1
     - _QueueOffset: 0
     - _Volume: 1

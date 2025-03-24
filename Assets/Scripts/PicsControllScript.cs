@@ -50,7 +50,7 @@ public class PicsControllScript : MonoBehaviour
             Sprite don = se_sprites.Find(t => t.name == string.Format("don{0}{1}", i, suffix));
             if (don == null) don = se_sprites.Find(t => t.name == string.Format("don{0}_en", i));
             SeNotes.Add(SpriteToTexture(don));
-            //SeSprite.Add(don);
+            SeSprite.Add(don);
         }
         //ka
         for (int i = 1; i <= 3; i++)
@@ -58,7 +58,7 @@ public class PicsControllScript : MonoBehaviour
             Sprite ka = se_sprites.Find(t => t.name == string.Format("ka{0}{1}", i, suffix));
             if (ka == null) ka = se_sprites.Find(t => t.name == string.Format("ka{0}_en", i));
             SeNotes.Add(SpriteToTexture(ka));
-            //SeSprite.Add(ka);
+            SeSprite.Add(ka);
         }
         //rapid
         for (int i = 1; i <= 2; i++)
@@ -66,40 +66,40 @@ public class PicsControllScript : MonoBehaviour
             Sprite ka = se_sprites.Find(t => t.name == string.Format("roll{0}{1}", i, suffix));
             if (ka == null) ka = se_sprites.Find(t => t.name == string.Format("roll{0}_en", i));
             SeNotes.Add(SpriteToTexture(ka));
-            //SeSprite.Add(ka);
+            SeSprite.Add(ka);
         }
         //9
         Sprite body = se_sprites.Find(t => t.name == string.Format("roll_body{0}", suffix));
         if (body == null) body = se_sprites.Find(t => t.name == "roll_body_en");
         SeNotes.Add(SpriteToTexture(body));
-        //SeSprite.Add(body);
+        SeSprite.Add(body);
         //10
         Sprite tail = se_sprites.Find(t => t.name == string.Format("roll_tail{0}", suffix));
         if (tail == null) tail = se_sprites.Find(t => t.name == "roll_tail_en");
         SeNotes.Add(SpriteToTexture(tail));
-        //SeSprite.Add(tail);
+        SeSprite.Add(tail);
         //11
         Sprite balloon = se_sprites.Find(t => t.name == string.Format("balloon{0}", suffix));
         if (balloon == null) balloon = se_sprites.Find(t => t.name == "balloon_en");
         SeNotes.Add(SpriteToTexture(balloon));
-        //SeSprite.Add(balloon);
+        SeSprite.Add(balloon);
         //12
         Sprite hammer = se_sprites.Find(t => t.name == string.Format("hammer{0}", suffix));
         if (hammer == null) hammer = se_sprites.Find(t => t.name == "hammer_en");
         SeNotes.Add(SpriteToTexture(hammer));
-        //SeSprite.Add(hammer);
+        SeSprite.Add(hammer);
 
         //kusudama 13
         Sprite kusudama = se_sprites.Find(t => t.name == string.Format("kusudama{0}", suffix));
         if (kusudama == null) kusudama = se_sprites.Find(t => t.name == "kusudama_en");
         SeNotes.Add(SpriteToTexture(kusudama));
-        //SeSprite.Add(hammer);
+        SeSprite.Add(hammer);
 
         //hands 14/15
         SeNotes.Add(SpriteToTexture(se_sprites.Find(t => t.name == string.Format("don5{0}", suffix))));
         SeNotes.Add(SpriteToTexture(se_sprites.Find(t => t.name == string.Format("ka4{0}", suffix))));
-        //SeSprite.Add(se_sprites.Find(t => t.name == string.Format("don5{0}", suffix)));
-        //SeSprite.Add(se_sprites.Find(t => t.name == string.Format("ka4{0}", suffix)));
+        SeSprite.Add(se_sprites.Find(t => t.name == string.Format("don5{0}", suffix)));
+        SeSprite.Add(se_sprites.Find(t => t.name == string.Format("ka4{0}", suffix)));
     }
 
     private KeyValuePair<Texture2D, Vector2> SpriteToTexture(Sprite sprite)

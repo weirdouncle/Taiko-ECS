@@ -213,7 +213,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2091c4c099d35774db3097188c008d70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Note_pre: {fileID: 2135214599006522420, guid: 6db7e8c8ea7ed5b4cba27fad39fcf5b5, type: 3}
   NoteDon_pre: {fileID: 5103853227736574591, guid: 162713d863de29549b9b5a98fcf33276, type: 3}
   NoteKa_pre: {fileID: 4883192215357994587, guid: 8ef6fe28e5009c14687c58ddbd47e30b, type: 3}
   NoteBigDon_pre: {fileID: 2839862081098428966, guid: bc1808c8e36a1534da941a051197580b, type: 3}

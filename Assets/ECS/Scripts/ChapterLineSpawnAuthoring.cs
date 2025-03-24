@@ -17,7 +17,7 @@ public class ChapterLineSpawnAuthoring : MonoBehaviour
             {
                 ChapterEntity = prefabEntity,
                 NumberEntity = numberEntity,
-                Number = false
+                Number = false,
             });
         }
     }
@@ -27,6 +27,7 @@ public struct ChaptersSpawn : IComponentData
 {
     public Entity ChapterEntity;
     public Entity NumberEntity;
-    public int SpawnCount;
+    public bool Spawning;
     public bool Number;
+    public bool Ready;
 }

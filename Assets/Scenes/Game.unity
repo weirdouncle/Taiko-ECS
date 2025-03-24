@@ -170,7 +170,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce2ef718079003c4eaee23a76815dd9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  material: {fileID: 2100000, guid: df57c0ac088e0f24c89dda23534b30a4, type: 2}
+  material: {fileID: 2100000, guid: c23c10cf20a030641b0fc8636bef88d2, type: 2}
 --- !u!1 &88701960
 GameObject:
   m_ObjectHideFlags: 0
@@ -651,7 +651,7 @@ Transform:
   m_GameObject: {fileID: 250400364}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.42, y: 1.541, z: -0.004}
+  m_LocalPosition: {x: -3.42, y: 1.541, z: 1.996}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2579,7 +2579,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbee9ed5b9ebf0443a13fc9d056f8bb1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SongTja: {fileID: 4900000, guid: bc01cd1293423034eb345ddafbfc9dcb, type: 3}
+  SongTja: {fileID: 4900000, guid: dc7a4d4f8d24ff44b905ae82436d2238, type: 3}
   NormalDon_pre: {fileID: 0}
   NormalKa_pre: {fileID: 0}
   BigDon_pre: {fileID: 0}
@@ -3602,7 +3602,7 @@ Transform:
   m_GameObject: {fileID: 1651593678}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3812,16 +3812,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   musicLoaderScript: {fileID: 1898052057}
   Note_pres:
-  - {fileID: 2135214599006522420, guid: 59279f037bfe00e44a1e53de1e8e7b58, type: 3}
-  - {fileID: 2135214599006522420, guid: c03ad8428f707cc42a15fb9cfab782f1, type: 3}
-  - {fileID: 2135214599006522420, guid: f4122e89883ea0e488477fe8e3a322e4, type: 3}
-  - {fileID: 2135214599006522420, guid: b927f3a9a42d04447a975e4c0f7956c0, type: 3}
   - {fileID: 2135214599006522420, guid: 925c209eeaaf9104795f011898979c7f, type: 3}
   - {fileID: 2135214599006522420, guid: 5a8e4f00ce068f2448db76d80f5d9b75, type: 3}
+  - {fileID: 2135214599006522420, guid: c03ad8428f707cc42a15fb9cfab782f1, type: 3}
+  - {fileID: 2135214599006522420, guid: f4122e89883ea0e488477fe8e3a322e4, type: 3}
   - {fileID: 2135214599006522420, guid: 79a0fba261ae36a468797814cf830e8b, type: 3}
+  - {fileID: 2135214599006522420, guid: b927f3a9a42d04447a975e4c0f7956c0, type: 3}
+  - {fileID: 2135214599006522420, guid: 59279f037bfe00e44a1e53de1e8e7b58, type: 3}
+  Chapter_pre: {fileID: 4860835018277031435, guid: bf11a25ee0d75ca44b61cebeda6ecf5f, type: 3}
   Buttons:
   - {fileID: 1993129344}
   - {fileID: 96696999}
+  Parents:
+  - {fileID: 623403085}
+  - {fileID: 2144102454}
 --- !u!1 &1863882156
 GameObject:
   m_ObjectHideFlags: 0
@@ -4050,7 +4054,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a77728eace79041b260c678929ccd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Music: {fileID: 4900000, guid: c63f28a5ae093ec4fb76a05beae9b6a9, type: 3}
+  Music: {fileID: 4900000, guid: 3c5746fd9d5f77940846c2b267bb7ef8, type: 3}
 --- !u!1 &1916713063
 GameObject:
   m_ObjectHideFlags: 0

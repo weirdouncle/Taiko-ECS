@@ -3,12 +3,12 @@
 --- !u!21 &2100000
 Material:
   serializedVersion: 8
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 32
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Numbers
-  m_Shader: {fileID: -6465566751694194690, guid: ff461f4edaa56f245925f0c4c0c4f9ed, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 96025b97c0a366f419781b40bef021e3, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -57,11 +57,13 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _Clip: 0.5
     - _Cutoff: 0.5
     - _EnableExternalAlpha: 0
     - _Frame: 0
     - _QueueControl: 0
     - _QueueOffset: 0
+    - _Volume: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}

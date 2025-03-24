@@ -366,8 +366,8 @@ public class LoaderScript : MonoBehaviour
                     }
                 }
                 */
-                    p1_notes.Add(random);
                 }
+                p1_notes.Add(random);
             }
         }
 
@@ -524,7 +524,7 @@ public class LoaderScript : MonoBehaviour
         }
         */
         //InvokePlay();
-        _notesAddingScript.SpawnNotes().Forget();
+        _notesAddingScript.OnParseEnd();
     }
 
     protected void InvokePlay()
@@ -960,14 +960,12 @@ public class LoaderScript : MonoBehaviour
             if (this.MapExist[(int)GameSetting.Difficulty] == false)                          //谱面难度确定
             {
                 LoadCourse = (int)GameSetting.Difficulty;
-                LoadCourse++;
-                for (int n = 1; n < (int)Difficulty.Total; n++)
+                LoadCourse--;
+                for (int n = (int)Difficulty.Total; n >= 0; n--)
                 {
                     if (this.MapExist[LoadCourse] == false)
                     {
-                        LoadCourse++;
-                        if (LoadCourse > (int)Difficulty.Total - 1)
-                            LoadCourse = 0;
+                        LoadCourse--;
                     }
                     else
                         break;
@@ -2088,7 +2086,9 @@ public class LoaderScript : MonoBehaviour
                                     }
                                 }
                                 else if (script.Type == 5 || script.Type == 6)
+                                {
                                     script.EndTime = (float)this.dbNowTime + nOFFSET;
+                                }
                             }
                         }
                     }

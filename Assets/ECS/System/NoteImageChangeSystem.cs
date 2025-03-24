@@ -36,7 +36,7 @@ public partial struct NoteMatJob : IJobEntity
 
     public void Execute(in NoteImageChange note, ref ArrayFrameMaterial mat)
     {
-        if (note.Type > 2)
+        if (note.Type == 3 || note.Type == 4 || note.Type == 6)
         {
             mat.Frame = Index2;
         }

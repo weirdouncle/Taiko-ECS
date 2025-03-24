@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3662798173465787022}
   - component: {fileID: 2828907247728902162}
-  - component: {fileID: -2372499053713046019}
   m_Layer: 0
   m_Name: ChapterLine
   m_TagString: Untagged
@@ -45,18 +44,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2f0a4030ebd2f9546b56386f34a520cf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &-2372499053713046019
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4860835018277031435}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c16549610bfe4458aa9389201d072bb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &5175899759787383766
@@ -168,7 +155,7 @@ Transform:
   m_GameObject: {fileID: 8135373060288317050}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.1, y: 0.756, z: -1}
+  m_LocalPosition: {x: 0.1, y: 0.756, z: 0}
   m_LocalScale: {x: 0.75, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

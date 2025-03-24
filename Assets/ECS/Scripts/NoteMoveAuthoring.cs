@@ -52,7 +52,7 @@ public class NoteMoveAuthoring : MonoBehaviour
     }
 }
 
-public struct NoteMove : IComponentData
+public struct NoteMove : IComponentData, IEnableableComponent
 {
     public int Index;
     public int Type;

@@ -1,3 +1,4 @@
+using CommonClass;
 using System;
 using Unity.Burst;
 using Unity.Collections;
@@ -17,38 +18,49 @@ partial struct ChapterSpawnSystem : ISystem
         state.RequireForUpdate<ChaptersSpawn>();
     }
 
-    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         Entity spawn = SystemAPI.GetSingletonEntity<ChaptersSpawn>();
         ChaptersSpawn spawner = SystemAPI.GetComponent<ChaptersSpawn>(spawn);
-        if (spawner.SpawnCount > 0)
+        if (spawner.Spawning)
         {
             Entity note_pre = spawner.ChapterEntity;
-            for (int i = 0; i < spawner.SpawnCount; i++)
+            for (int i = 0; i < LoaderScript.Lines.Count; i++)
             {
+                ChapterLine line = LoaderScript.Lines[i];
                 Entity instance = state.EntityManager.Instantiate(note_pre);
 
                 state.EntityManager.AddComponent<Parent>(instance);
                 state.EntityManager.SetComponentData(instance, new Parent { Value = spawn });
                 state.EntityManager.SetComponentData(instance, new LocalTransform
                 {
-                    Position = new float3(i * 0.5f, 0, i * -0.000001f),
+                    Position = new float3(0, 0, 0),
                     Rotation = quaternion.identity,
                     Scale = 1
                 });
-                state.EntityManager.SetComponentData(instance, new ChapterMove { Chapter = i + 1 });
+                state.EntityManager.SetComponentData(instance, new ChapterMove
+                {
+                    Bpm = line.Bpm,
+                    AppearTime = line.AppearTime,
+                    MoveTime = line.MoveTime,
+                    Chapter = line.Chapter,
+                    Scroll = line.Scroll,
+                    JudgeTime = line.JudgeTime,
+                    WaitingTime = line.WaitingTime,
+                });
             }
             SystemAPI.SetComponent(spawn, new ChaptersSpawn
             {
                 ChapterEntity = spawner.ChapterEntity,
                 NumberEntity = spawner.NumberEntity,
-                SpawnCount = 0,
+                Spawning = false,
                 Number = true
             });
         }
         else if (spawner.Number)
         {
+            /*
+             * 
             //在练习模式下添加小节序号
             EntityCommandBuffer ecb = new(Allocator.Temp);
             foreach (var (parent, _, entity) in
@@ -103,11 +115,12 @@ partial struct ChapterSpawnSystem : ISystem
             }
             ecb.Playback(state.EntityManager);
             ecb.Dispose();
-
+            */
             SystemAPI.SetComponent(spawn, new ChaptersSpawn
             {
-                SpawnCount = 0,
+                Spawning = false,
                 Number = false,
+                Ready = true
             });
         }
     }

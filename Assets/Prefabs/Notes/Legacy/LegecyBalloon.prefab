@@ -63,6 +63,8 @@ MonoBehaviour:
   IsFixedSENote: 0
   Senote: 0
   fBMSCROLLTime: 0
+  Z_Value: 0
+  NoteJudgeState: 3
   Main: {fileID: 5608527409721650321}
   SeNotes: []
   Bodys: []
@@ -90,7 +92,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -876546973899608171, guid: 7c58c26f5f2e0ed41b97aeba1bc55737, type: 3}
+  - {fileID: 2100000, guid: e783bd51c78d0e042a2e4774b2a162c5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -258,7 +260,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -876546973899608171, guid: 7c58c26f5f2e0ed41b97aeba1bc55737, type: 3}
+  - {fileID: 2100000, guid: e783bd51c78d0e042a2e4774b2a162c5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

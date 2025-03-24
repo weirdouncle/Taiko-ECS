@@ -21,7 +21,7 @@ public class GameSetting
     public static SongInfo SelectedInfo;
     public static DanCourse SelectedCourse;
     public static bool FavorSelected;
-    public static Difficulty Difficulty = Difficulty.Easy;
+    public static Difficulty Difficulty = Difficulty.Edit;
     public static Dictionary<SortColor, List<SongInfo>> Songs = new Dictionary<SortColor, List<SongInfo>>();
     public static PlayerRecord Record;
     public static DataSet Skin;

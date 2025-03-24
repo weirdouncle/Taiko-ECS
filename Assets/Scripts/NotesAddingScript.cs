@@ -10,14 +10,25 @@ using System.Linq;
 using Unity.Rendering;
 using UnityEngine.UI;
 using System;
+using CommonClass;
 
 public class NotesAddingScript : MonoBehaviour
 {
     [SerializeField] private MusicLoaderScript musicLoaderScript;
     [SerializeField] private GameObject[] Note_pres;
+    [SerializeField] private GameObject Chapter_pre;
     [SerializeField] private Button[] Buttons;
+    [SerializeField] private Transform[] Parents;
+
     private EntityManager entityManager;
     private bool ready = false;
+    private bool dots_play;
+    private bool legacy_play;
+    private List<NoteMoveScript> notes = new List<NoteMoveScript>();
+    private List<ChapterLineMoveScript> lines = new List<ChapterLineMoveScript>();
+
+    public static float LastStart;
+    public static bool Playing = false;
 
     protected readonly float time_before_start = 1f + (15000f / 120f * (4f / 4f)) * 16f / 1000;
 
@@ -25,6 +36,9 @@ public class NotesAddingScript : MonoBehaviour
     {
         foreach (Button button in Buttons)
             button.gameObject.SetActive(false);
+
+        legacy_play = true;
+        SpawnLegacyNotes().Forget();
     }
 
     public void UseDOTS()
@@ -32,10 +46,12 @@ public class NotesAddingScript : MonoBehaviour
         foreach (Button button in Buttons)
             button.gameObject.SetActive(false);
 
-        StartPlay().Forget();
+        dots_play= true;
+        SpawnNotes().Forget();
+        SpawnChapters().Forget();
     }
 
-    public async UniTaskVoid SpawnCHapters()
+    public async UniTaskVoid SpawnChapters()
     {
         await UniTask.WaitUntil(() => World.DefaultGameObjectInjectionWorld != null);
 
@@ -52,7 +68,7 @@ public class NotesAddingScript : MonoBehaviour
             if (datas.Length > 0 && entities.Length > 0) // 防止数组越界
             {
                 ChaptersSpawn chapter = datas[0];
-                chapter.SpawnCount = 100;
+                chapter.Spawning = true;
                 ecb.SetComponent(entities[0], chapter);
             }
         }
@@ -90,11 +106,8 @@ public class NotesAddingScript : MonoBehaviour
         ecb.Dispose();
     }
 
-    private async UniTaskVoid StartPlay()
+    private async UniTaskVoid StartDotsPlay()
     {
-        await UniTask.Delay(TimeSpan.FromSeconds(Mathf.Max(0, time_before_start - 0.01f)), true, PlayerLoopTiming.Update, this.GetCancellationTokenOnDestroy());
-        musicLoaderScript.PlayMusic(false);
-
         // 创建 EntityCommandBuffer
         EntityCommandBuffer ecb = new(Allocator.Temp);
 
@@ -114,11 +127,14 @@ public class NotesAddingScript : MonoBehaviour
         // 应用 EntityCommandBuffer
         ecb.Playback(entityManager);
         ecb.Dispose();
+
+        await UniTask.Delay(TimeSpan.FromSeconds(Mathf.Max(0, time_before_start - 0.01f)), true, PlayerLoopTiming.Update, this.GetCancellationTokenOnDestroy());
+        musicLoaderScript.PlayMusic(false);
     }
 
     private void Update()
     {
-        if (!ready && World.DefaultGameObjectInjectionWorld != null)
+        if (dots_play && !ready && World.DefaultGameObjectInjectionWorld != null)
         {
             EntityQuery entityQuery = World.DefaultGameObjectInjectionWorld.EntityManager.CreateEntityQuery(typeof(NoteMoveControll));
             using (var datas = entityQuery.ToComponentDataArray<NoteMoveControll>(Allocator.TempJob))
@@ -130,11 +146,102 @@ public class NotesAddingScript : MonoBehaviour
                     if (note.Ready)
                     {
                         ready = true;
-                        foreach (Button button in Buttons)
-                            button.gameObject.SetActive(true);
+                        StartDotsPlay().Forget();
                     }
                 }
             }
         }
+    }
+
+    private async UniTaskVoid StartLegacyPlay()
+    {
+        Playing = true;
+        LastStart = Time.time;
+        await UniTask.Delay(TimeSpan.FromSeconds(Mathf.Max(0, time_before_start - 0.01f)), true, PlayerLoopTiming.Update, this.GetCancellationTokenOnDestroy());
+        musicLoaderScript.PlayMusic(false);
+    }
+
+    private async UniTaskVoid SpawnLegacyNotes()
+    {
+        await UniTask.WaitForEndOfFrame(this, this.GetCancellationTokenOnDestroy());
+
+        foreach (NoteChip chip in LoaderScript.Notes.Values)
+        {
+            GameObject game = null;
+            switch (chip.Type)
+            {
+                case 1:
+                    game = Instantiate(Note_pres[0], Parents[0]);
+                    break;
+                case 2:
+                    game = Instantiate(Note_pres[1], Parents[0]);
+                    break;
+                case 3:
+                    game = Instantiate(Note_pres[2], Parents[0]);
+                    break;
+                case 4:
+                    game = Instantiate(Note_pres[3], Parents[0]);
+                    break;
+                case 5:
+                    Debug.Log(chip.Type);
+                    game = Instantiate(Note_pres[4], Parents[0]);
+                    break;
+                case 6:
+                    Debug.Log(chip.Type);
+                    game = Instantiate(Note_pres[5], Parents[0]);
+                    break;
+                case 7:
+                    game = Instantiate(Note_pres[6], Parents[0]);
+                    break;
+            }
+            NoteMoveScript script = game.GetComponent<NoteMoveScript>();
+            script.Index = chip.Index;
+            script.Type = chip.Type;
+            script.Chapter = chip.Chapter;
+            script.JudgeTime = chip.JudgeTime;
+            script.MidTime = chip.MidTime;
+            script.EndTime = chip.EndTime;
+            script.BranchRelated = chip.BranchRelated;
+            script.Branch = chip.Branch;
+            script.Bpm = chip.Bpm;
+            script.AppearTime = chip.AppearTime;
+            script.MoveTime = chip.MoveTime;
+            script.Scroll = chip.Scroll;
+            script.WaitingTime = chip.WaitingTime;
+            script.IsFixedSENote = chip.IsFixedSENote;
+            script.Senote = chip.Senote;
+            script.fBMSCROLLTime = chip.fBMSCROLLTime;
+            script.Z_Value = chip.Z_Value;
+
+            notes.Add(script);
+        }
+
+        foreach (NoteMoveScript note in notes)
+            note.Prepare();
+
+        foreach (ChapterLine line in LoaderScript.Lines)
+        {
+            GameObject chapter = Instantiate(Chapter_pre, Parents[1]);
+            ChapterLineMoveScript script = chapter.GetComponent<ChapterLineMoveScript>();
+            script.Bpm = line.Bpm;
+            script.AppearTime = line.AppearTime;
+            script.MoveTime = line.MoveTime;
+            script.Chapter = line.Chapter;
+            script.Scroll = line.Scroll;
+            script.JudgeTime = line.JudgeTime;
+            script.WaitingTime = line.WaitingTime;
+            lines.Add(script);
+
+            script.Prepare();
+        }
+
+        await UniTask.DelayFrame(5, PlayerLoopTiming.Update, this.GetCancellationTokenOnDestroy());
+        StartLegacyPlay().Forget();
+    }
+
+    public void OnParseEnd()
+    {
+        foreach (Button button in Buttons)
+            button.gameObject.SetActive(true);
     }
 }

@@ -14,7 +14,7 @@ public class ChapterLineAuthoring : MonoBehaviour
     }
 }
 
-public struct ChapterMove : IComponentData
+public struct ChapterMove : IComponentData, IEnableableComponent
 {
     public double Bpm;
     public float AppearTime;
@@ -23,4 +23,5 @@ public struct ChapterMove : IComponentData
     public double Scroll;
     public float JudgeTime;
     public int WaitingTime;
+    public bool Disable;
 }
