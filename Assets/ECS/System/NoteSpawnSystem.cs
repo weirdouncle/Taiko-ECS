@@ -167,6 +167,15 @@ partial struct NoteSpawnSystem : ISystem
                             {
                                 Value = float4x4.Scale(new_scale)        //image.ValueRO.Scale.x记录的是其原始scale值
                             });
+                            RenderBounds bounds = new RenderBounds
+                            {
+                                Value = new AABB
+                                {
+                                    Center = new float3(0,0,0),
+                                    Extents = new float3(1, 0.5f, 0.00000000000000003061617f)
+                                }
+                            };
+                            ecb.SetComponent(child, bounds);        //修改黄条的RenderBounds，不然若其离开屏幕太远会被遮挡
 
                             //更新body和senote图片
                             DynamicBuffer<Child> Se1 = SystemAPI.GetBuffer<Child>(child);
@@ -174,6 +183,7 @@ partial struct NoteSpawnSystem : ISystem
                             MaterialMeshInfo mat = state.EntityManager.GetComponentData<MaterialMeshInfo>(Se1Entity);
                             mat.MaterialID = PicsControllScript.BatchMaterials[9];
                             ecb.SetComponent(Se1Entity, mat);
+                            ecb.SetComponent(Se1Entity, bounds);
                         }
                         else
                         {
