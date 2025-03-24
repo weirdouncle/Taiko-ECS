@@ -1,82 +1,109 @@
-﻿using CommonClass;
-using System;
-using System.Linq;
-using Unity.Burst;
+﻿using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using Random = Unity.Mathematics.Random;
+using UnityEngine;
 
 partial struct NotesMoveSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<NotesSpawn>();
+        state.RequireForUpdate<NoteMoveControll>();
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        var entityQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform, NoteMove>().Build();
-        int count = entityQuery.CalculateEntityCount();
-
-        NativeArray <float2> randomArray = new NativeArray<float2>(count, Allocator.TempJob);
-        for (int i = 0; i < count; i++)
+        RefRW<NoteMoveControll> controller = SystemAPI.GetSingletonRW<NoteMoveControll>();
+        //正常游戏状态
+        if (controller.ValueRO.Playing)
         {
-            Random rand = new Random(math.hash(new int3(1234, i, (int)SystemAPI.Time.ElapsedTime * 10000))); // 确保唯一种子
-            randomArray[i] = rand.NextFloat2(-1, 1) * SystemAPI.Time.DeltaTime;
+            // 运行 Job
+            NoteMoveJob job = new NoteMoveJob
+            {
+                Time = (float)SystemAPI.Time.ElapsedTime,
+                LastStart = controller.ValueRO.LastStart
+            };
+            job.ScheduleParallel();
         }
-
-        // 运行 Job
-        NoteMoveJob job = new NoteMoveJob
+        else if (controller.ValueRO.Reset)      //重置游戏
         {
-            randomArray = randomArray
-        };
+            EntityQuery query = SystemAPI.QueryBuilder().WithAll<Disabled>().WithAll<NoteMove>().Build();
 
-        // 确保 Job 完成后再释放数组
-        job.ScheduleParallel();
-        state.Dependency = randomArray.Dispose(state.Dependency);
+            // 获取所有被禁用的实体
+            using var entities = query.ToEntityArray(Allocator.Temp);
+            foreach (var entity in entities)
+            {
+                state.EntityManager.RemoveComponent<Disabled>(entity);
+                DynamicBuffer<LinkedEntityGroup> linkedEntities = state.EntityManager.GetBuffer<LinkedEntityGroup>(entity);
+                foreach (var child in linkedEntities)
+                    state.EntityManager.RemoveComponent<Disabled>(child.Value);
+            }
 
-        //foreach ((RefRW<LocalTransform> LocalTransform, RefRO<NoteMove> NoteMove) in SystemAPI.Query<RefRW<LocalTransform>, RefRO<NoteMove>>())
-        //{
-        //    float2 randomOffset = random.NextFloat2() * 2.0f - 1.0f;
-        //    // 将随机偏移量与 DeltaTime 相乘
-        //    float2 scaledOffset = randomOffset * SystemAPI.Time.DeltaTime * 0.0000000001f;
-        //    LocalTransform.ValueRW.Position += new float3(randomOffset.xy, 0);
+            var entityQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform, NoteMove>().Build();
+            NoteResetJob job = new();
+            job.ScheduleParallel(entityQuery);
 
-        //    float3 position = LocalTransform.ValueRW.Position;
-
-        //    // 检测是否超出屏幕范围
-        //    if (position.x < -9.6 || position.x > 9.6 ||
-        //        position.y < -5.4 || position.y > 5.4)
-        //    {
-        //        // 如果超出范围，重置位置为 (0, 0)
-        //        LocalTransform.ValueRW.Position = new float3(0, 0, position.z);
-        //    }
-        //}
+            controller.ValueRW.CurrentTime = 0;
+            controller.ValueRW.Reset = false;
+            controller.ValueRW.Ready = true;
+        }
     }
 }
 
 [BurstCompile]
 public partial struct NoteMoveJob : IJobEntity
 {
-    [NativeDisableParallelForRestriction]
-    public NativeArray<float2> randomArray; // Store a unique Random per thread
+    public float Time;
+    public float LastStart;
 
-    public void Execute(ref LocalTransform LocalTransform, in NoteMove note, [EntityIndexInQuery] int index)
+    public void Execute(ref LocalTransform LocalTransform, ref NoteMove note)
     {
-        // 将随机偏移量与 DeltaTime 相乘
-        LocalTransform.Position += new float3(randomArray[index].xy, 0);
-
-        float3 position = LocalTransform.Position;
-
-        // 检测是否超出屏幕范围
-        if (position.x < -6.2 || position.x > 13 ||
-            position.y < -6.9 || position.y > 3.9)
+        if (!note.Disable)
         {
-            // 如果超出范围，重置位置为 (0, 0)
-            LocalTransform.Position = new float3(0, 0, position.z);
+            float time = note.JudgeTime - (Time - LastStart) * 1000;
+            if (note.Type == 7)
+            {
+                if (time >= 0)
+                    LocalTransform.Position = new Vector3((float)(time * note.Bpm * note.Scroll * (1 + 1.5f)) / 628.7f * 1.5f / 100, 0, note.Z_Value);
+                else
+                {
+                    time = note.EndTime  - (Time - LastStart) * 1000;
+                    if (time >= 0)
+                        LocalTransform.Position = new Vector3(0, 0, note.Z_Value);
+                    else
+                        LocalTransform.Position = new Vector3((float)(time * note.Bpm * note.Scroll * (1 + 1.5f)) / 628.7f * 1.5f / 100, 0, note.Z_Value);
+                }
+            }
+            else
+            {
+                LocalTransform.Position = new float3((float)(time * note.Bpm * note.Scroll * (1 + 1.5f)) / 628.7f * 1.5f / 100, 0, note.Z_Value);
+            }
+            if (note.Type <= 4)
+            {
+                if (time <= 0)      //自动打击
+                {
+                    note.NoteJudgeState = NoteMove.HitNoteResult.Perfect;
+                    note.Disable = true;
+                }
+                else if (note.Type <= 4 && time < -125)     //miss逻辑
+                    note.NoteJudgeState = NoteMove.HitNoteResult.Lost;
+            }
+
+            if ((note.Scroll >= 0 && LocalTransform.Position.x < -7) || (note.Scroll < 0 && LocalTransform.Position.x > 14))
+                note.Disable = true;
         }
+    }
+}
+
+[BurstCompile]
+public partial struct NoteResetJob : IJobEntity
+{
+    public void Execute(ref LocalTransform LocalTransform, ref NoteMove note)
+    {
+        note.Disable = false;
+        note.NoteJudgeState = NoteMove.HitNoteResult.None;
+        LocalTransform.Position = new float3((float)(note.JudgeTime * note.Bpm * note.Scroll * (1 + 1.5f)) / 628.7f * 1.5f / 100, 0, note.Z_Value);
     }
 }

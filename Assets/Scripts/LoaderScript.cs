@@ -15,6 +15,7 @@ public class LoaderScript : MonoBehaviour
 {
     public static event PlayDelegate Play;
 
+    public TextAsset SongTja;
     public GameObject NormalDon_pre;
     public GameObject NormalKa_pre;
     public GameObject BigDon_pre;
@@ -33,6 +34,7 @@ public class LoaderScript : MonoBehaviour
     public Transform ChapterLine2PParent;
     //public NotesSplitScript NoteSplit;
     //public KusudamaDonControll Kusudama;
+    [SerializeField]private NotesAddingScript _notesAddingScript;
     
     public float BPM { set; get; }
     public bool[] bHasBranch { set; get; } = new bool[(int)Difficulty.Total] { false, false, false, false, false, false, false };
@@ -104,10 +106,8 @@ public class LoaderScript : MonoBehaviour
     protected int listBalloon_Master_数値管理 = 0;
 
     public static List<CChip> Others = new List<CChip>();
-    //public static Dictionary<int, NoteSoundScript> Notes = new Dictionary<int, NoteSoundScript>();
-    //public static List<ChapterLineScript> Lines = new List<ChapterLineScript>();
-    //public static Dictionary<int, NoteSoundScript> Notes2P = new Dictionary<int, NoteSoundScript>();
-    //public static List<ChapterLineScript> Lines2P = new List<ChapterLineScript>();
+    public static Dictionary<int, NoteChip> Notes = new Dictionary<int, NoteChip>();
+    public static List<ChapterLine> Lines = new List<ChapterLine>();
     public static int[] ScoreDiff = new int[(int)Difficulty.Total]; //[y]
     public static int[,] ScoreInit = new int[2, (int)Difficulty.Total]; //[ x, y ] x=通常or真打 y=コース
     public static int ScoreModeTmp;
@@ -115,12 +115,10 @@ public class LoaderScript : MonoBehaviour
     protected int note_index = 0;
     protected Dictionary<int, NoteChip> notes = new Dictionary<int, NoteChip>();
     protected Config config;
-    protected List<ChapterLine> lines = new List<ChapterLine>();
-    protected List<ChapterLine> lines_2p = new List<ChapterLine>();
 
     protected float z_value = 0;
     protected string new_line = Encoding.Default.GetString(new byte[1] { 13 });
-    protected bool ai_battle = false;
+
     void OnDestroy()
     {
         //foreach (NoteSoundScript note in Notes.Values)
@@ -140,23 +138,13 @@ public class LoaderScript : MonoBehaviour
         //        Destroy(note.gameObject);
 
         //Others.Clear();
-        //Notes.Clear();
-        //Lines.Clear();
-        //Notes2P.Clear();
-        //Lines2P.Clear();
+        Notes.Clear();
+        Lines.Clear();
         ListBRANCH.Clear();
     }
     void Start()
     {
-        string scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
-        if (scene.Contains("GameAI")) ai_battle = true;
-
-        config = GameSetting.Config.Copy(false);
-        if (!ai_battle && GameSetting.Replay != null)
-        {
-            ReplayConfig replay_config = GameSetting.Replay.Config[GameSetting.Config.ScoreMode][(int)GameSetting.Difficulty];
-            config.CopyReplayConfig(replay_config);
-        }
+        config = new();
 
         for (int y = 0; y < (int)Difficulty.Total; y++)
         {
@@ -175,26 +163,18 @@ public class LoaderScript : MonoBehaviour
         dbNowSCROLL_Master = new double[] { 1.0, 0.0 };
         current_course = 0;
 
-        Parse().Forget();
+        Parse(SongTja.text).Forget();
     }
 
-    protected virtual async UniTaskVoid Parse()
+    protected virtual async UniTaskVoid Parse(string str)
     {
-        await UniTask.RunOnThreadPool(() => { Decode(); });
+        await UniTask.RunOnThreadPool(() => { Decode(str); });
         await UniTask.SwitchToMainThread();
-        //AddNote().Forget();
+        AddNote().Forget();
     }
 
-    protected virtual void Decode()
+    protected virtual void Decode(string str)
     {
-        string path = GameSetting.SelectedInfo.Path;
-        string str;
-        using (var reader = new StreamReader(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read), Encoding.UTF8))
-        {
-            str = reader.ReadToEnd();
-            reader.Close();
-        }
-
         if (!string.IsNullOrEmpty(str))
         {
             str = str.Replace(Environment.NewLine, "\n");
@@ -293,15 +273,13 @@ public class LoaderScript : MonoBehaviour
         Others.RemoveAll(t => t.JudgeTime > end_time);
         #endregion
     }
-    /*
     protected virtual async UniTaskVoid AddNote()
     {
-        bool kusu = false;
-        bool rolling_note = false;
         int count = 0;
 
         await UniTask.WaitForEndOfFrame(this, this.GetCancellationTokenOnDestroy());
 
+        /*
         foreach (ChapterLine line_chip in lines)
         {
             ChapterLineScript duplicated = Lines.Find(t => t.Chapter == line_chip.Chapter);
@@ -323,41 +301,20 @@ public class LoaderScript : MonoBehaviour
                 Lines.Add(script);
             }
         }
-
-        foreach (ChapterLine line_chip in lines_2p)
-        {
-            ChapterLineScript duplicated = Lines2P.Find(t => t.Chapter == line_chip.Chapter);
-            if (duplicated == null)
-            {
-                GameObject line = Instantiate(ChapterLine_pre, ChapterLine2PParent);
-                ChapterLineScript script = line.GetComponent<ChapterLineScript>();
-                script.Chapter = line_chip.Chapter;
-                script.Bpm = line_chip.Bpm;
-                script.Scroll = line_chip.Scroll;
-
-                if (ai_battle || GameSetting.Mode == CommonClass.PlayMode.PlayWithReplay && !GameSetting.Config.PlayRight) script.Replay = true;
-
-                script.JudgeTime = line_chip.JudgeTime;
-                script.AppearTime = line_chip.AppearTime;
-                script.MoveTime = line_chip.MoveTime;
-                script.WaitingTime = line_chip.WaitingTime;
-                script.Adjust = GameSetting.Config.NoteAdjust;
-                Lines2P.Add(script);
-            }
-        }
-
-
+        */
+        
         //计算1P随机
         List<NoteChip> p1_notes = new List<NoteChip>();
 
-        if (GameSetting.Mode != CommonClass.PlayMode.Replay && (GameSetting.Config.Random != RandomType.None || GameSetting.Config.Reverse))
+        if (true)
         {
             foreach (NoteChip chip in notes.Values)
             {
                 NoteChip random = chip.Copy();
                 if (random.Type < 5 || (random.Type >= 19 && random.Type <= 22))
                 {
-                    bool change = false;
+                    bool change = false;        //判断是否开启音符随机
+                    /*
                     switch (GameSetting.Config.Random)
                     {
                         case RandomType.None when GameSetting.Config.Reverse:
@@ -408,23 +365,10 @@ public class LoaderScript : MonoBehaviour
                         }
                     }
                 }
-
-                p1_notes.Add(random);
+                */
+                    p1_notes.Add(random);
+                }
             }
-        }
-        else if (GameSetting.Mode == CommonClass.PlayMode.Replay)
-        {
-            foreach (NoteChip chip in notes.Values)
-            {
-                NoteChip random = chip.Copy();
-                int chip_type2 = GameSetting.Replay.Notes[GameSetting.Config.ScoreMode][(int)GameSetting.Difficulty][chip.Index];
-                random.Type = chip_type2;
-                p1_notes.Add(random);
-            }
-        }
-        else
-        {
-            p1_notes = new List<NoteChip>(notes.Values);
         }
 
         //计算1P音符senote
@@ -435,34 +379,9 @@ public class LoaderScript : MonoBehaviour
             this.tSetSenotes(p1_notes);
         #endregion
 
-        List<NoteChip> p2_notes = new List<NoteChip>();
-        if (GameSetting.Mode == CommonClass.PlayMode.PlayWithReplay)
-        {
-            foreach (NoteChip chip in notes.Values)
-            {
-                NoteChip random = chip.Copy();
-                int chip_type2 = GameSetting.Replay.Notes[GameSetting.Config.ScoreMode][(int)GameSetting.Difficulty][chip.Index];
-                random.Type = chip_type2;
-                p2_notes.Add(random);
-            }
-
-            //计算2P音符senote
-            #region[ seNotes計算 ]
-            if (ListBRANCH.Count != 0)
-                this.tSetSenotes_branch(p2_notes);
-            else
-                this.tSetSenotes(p2_notes);
-            #endregion
-        }
-        else if (ai_battle)
-            p2_notes = new List<NoteChip>(p1_notes);
-
 
         //生成1p音符
         Transform parent = NoteParent;
-        if (!ai_battle && GameSetting.Mode == CommonClass.PlayMode.PlayWithReplay && GameSetting.Config.PlayRight)
-            parent = Note2PParent;
-
         foreach (NoteChip chip in p1_notes)
         {
             if (count >= 20)
@@ -470,7 +389,7 @@ public class LoaderScript : MonoBehaviour
                 await UniTask.WaitForEndOfFrame(this, this.GetCancellationTokenOnDestroy());
                 count = 0;
             }
-
+            /*
             GameObject sound = null;
             switch (chip.Type)
             {
@@ -592,204 +511,22 @@ public class LoaderScript : MonoBehaviour
                 Notes.Add(script.Index, script);
             else
                 Notes2P.Add(script.Index, script);
-
+            */
+            chip.Z_Value = z_value;
+            z_value += 0.00001f;
+            Notes.Add(chip.Index, chip);
             count++;
         }
-
-        if (kusu)
-        {
-            Kusudama.OnInit();          //确定有小锤后，复制咚模型
-        }
-        if (rolling_note)
-            GloableAniControllerScript.Instance.Rollings[0].Init();
-
-        //生成2P音符
-        if (ai_battle || GameSetting.Mode == CommonClass.PlayMode.PlayWithReplay)
-        {
-            rolling_note = false;
-            parent = Note2PParent;
-            if (!ai_battle && GameSetting.Config.PlayRight)
-                parent = NoteParent;
-
-            count = 0;
-            z_value = 0;
-            foreach (NoteChip chip in p2_notes)
-            {
-                if (count >= 20)
-                {
-                    await UniTask.WaitForEndOfFrame(this, this.GetCancellationTokenOnDestroy());
-                    count = 0;
-                }
-
-                GameObject sound2 = null;
-                //adjust random
-                switch (chip.Type)
-                {
-                    case 1:
-                    case 21:
-                        sound2 = Instantiate(NormalDon_pre, parent);
-                        break;
-                    case 2:
-                    case 22:
-                        sound2 = Instantiate(NormalKa_pre, parent);
-                        break;
-                    case 3:
-                        sound2 = Instantiate(BigDon_pre, parent);
-                        break;
-                    case 4:
-                        sound2 = Instantiate(BigKa_pre, parent);
-                        break;
-                    case 5:
-                        {
-                            sound2 = Instantiate(Rapid_pre, parent);
-                            RapidScript rapid = sound2.GetComponent<RapidScript>();
-                            rapid.EndTime = chip.EndTime;
-                        }
-                        break;
-                    case 6:
-                        {
-                            sound2 = Instantiate(BigRapid_pre, parent);
-                            RapidScript rapid = sound2.GetComponent<RapidScript>();
-                            rapid.EndTime = chip.EndTime;
-                        }
-                        break;
-                    case 7:
-                        {
-                            sound2 = Instantiate(Ballon_pre, parent);
-                            BallonScript balloon = sound2.GetComponent<BallonScript>();
-                            balloon.HitCount = chip.HitCount;
-                            balloon.EndTime = chip.EndTime;
-                        }
-                        break;
-                    case 9:
-                        {
-                            if (!ai_battle && (Score)GameSetting.Config.ScoreMode == Score.Normal)
-                            {
-                                sound2 = Instantiate(Hammer_pre, parent);
-                                BallonScript balloon = sound2.GetComponent<BallonScript>();
-                                balloon.HitCount = chip.HitCount;
-                                balloon.EndTime = chip.EndTime;
-                                if (balloon is HammerScript hammer)
-                                    hammer.MidTime = chip.MidTime;
-                                else if (balloon is KusudamaNoteScript kusudama)
-                                    kusudama.MidTime = chip.MidTime;
-                            }
-                            else if (!ai_battle && (Score)GameSetting.Config.ScoreMode == Score.Nijiiro)
-                            {
-                                sound2 = Instantiate(Kusudama_pre, parent);
-                                BallonScript balloon = sound2.GetComponent<BallonScript>();
-                                balloon.HitCount = chip.HitCount;
-                                balloon.EndTime = chip.EndTime;
-                            }
-                            else
-                            {
-                                sound2 = Instantiate(Ballon_pre, parent);
-                                BallonScript balloon = sound2.GetComponent<BallonScript>();
-                                balloon.HitCount = chip.HitCount;
-                                balloon.EndTime = chip.EndTime;
-                            }
-                        }
-                        break;
-                    case 19:
-                    case 20:
-                        rolling_note = true;
-                        sound2 = Instantiate(RollingNote_pres[chip.Type == 19 ? 0 : 1], parent);
-                        break;
-                }
-
-                //sound.transform.SetAsFirstSibling();
-                NoteSoundScript script2 = sound2.GetComponent<NoteSoundScript>();
-                script2.Z_Value = z_value;
-                z_value += 0.00001f;
-                script2.Chapter = chip.Chapter;
-                script2.Bpm = chip.Bpm;
-                script2.Steal = config.Steal;
-
-                float speed2 = (int)config.Speed;
-                if (speed2 > 10) speed2 /= 10;
-
-                script2.Scroll = chip.Scroll * speed2;
-                script2.fBMSCROLLTime = chip.fBMSCROLLTime;
-                script2.JudgeTime = chip.JudgeTime;
-                script2.AppearTime = chip.AppearTime;
-                script2.MoveTime = chip.MoveTime;
-                script2.WaitingTime = chip.WaitingTime;
-                script2.Gogo = chip.Gogo;
-                script2.Replay = true;
-                script2.Player2 = ai_battle || !GameSetting.Config.PlayRight;
-                script2.Type = (chip.Type != 9 || (!ai_battle && (Score)GameSetting.Config.ScoreMode != Score.Shin)) ? chip.Type : 7;
-                script2.Adjust = GameSetting.Config.NoteAdjust;
-                if (chip.Type == 10 || chip.Type == 11) script2.Type = (chip.Type == 10 ? 3 : 4);
-                if (chip.Type == 21 || chip.Type == 22)
-                {
-                    script2.Type = (chip.Type == 21 ? 1 : 2);
-                    script2.Note_State = NoteSoundScript.NoteState.Stop;
-                }
-
-                script2.BranchRelated = chip.BranchRelated;
-                script2.Branch = chip.Branch;
-                script2.IsFixedSENote = chip.IsFixedSENote;
-                script2.Senote = chip.Senote;
-
-                script2.Index = chip.Index;
-
-                if (!script2.Player2)
-                    Notes.Add(script2.Index, script2);
-                else
-                    Notes2P.Add(script2.Index, script2);
-
-                count++;
-            }
-
-            if (rolling_note)
-                GloableAniControllerScript.Instance.Rollings[1].Init();
-        }
-
-
-        //设置小节线显示
-        if (GameSetting.Mode != CommonClass.PlayMode.Practice)
-        {
-            List<CChip> remove = new List<CChip>();
-            foreach (CChip chip in Others)
-            {
-                if (chip.Type == CChip.CType.CHAPTERLINE_OFF)
-                {
-                    foreach (ChapterLineScript script in LoaderScript.Lines)
-                    {
-                        if (script.Chapter >= chip.StartChapter && (script.Chapter < chip.EndChapter || chip.EndChapter == -1))
-                            script.Show = false;
-                    }
-                    foreach (ChapterLineScript script in LoaderScript.Lines2P)
-                    {
-                        if (script.Chapter >= chip.StartChapter && (script.Chapter < chip.EndChapter || chip.EndChapter == -1))
-                            script.Show = false;
-                    }
-                    remove.Add(chip);
-                }
-            }
-            Others.RemoveAll(t => remove.Contains(t));
-        }
-
-        NoteSplit.StartPlay();
+        /*
         foreach (NoteSoundScript script in LoaderScript.Notes.Values)
         {
             script.Prepare();
         }
-        foreach (ChapterLineScript script in LoaderScript.Lines)
-        {
-            script.Prepare();
-        }
-        foreach (NoteSoundScript script in LoaderScript.Notes2P.Values)
-        {
-            script.Prepare();
-        }
-        foreach (ChapterLineScript script in LoaderScript.Lines2P)
-        {
-            script.Prepare();
-        }
-        InvokePlay();
+        */
+        //InvokePlay();
+        _notesAddingScript.SpawnNotes().Forget();
     }
-    */
+
     protected void InvokePlay()
     {
         Play?.Invoke();
@@ -1829,21 +1566,20 @@ public class LoaderScript : MonoBehaviour
                 result = 0;
                 break;
             case "1":
-            case "L" when ai_battle:
                 result = 1;
                 break;
             case "2":
-            case "M" when ai_battle:
+            case "M":
                 result = 2;
                 break;
             case "3":
             case "A":
-            case "J" when ai_battle:
+            case "J":
                 result = 3;
                 break;
             case "4":
             case "B":
-            case "K" when ai_battle:
+            case "K":
                 result = 4;
                 break;
             case "5":
@@ -1863,18 +1599,6 @@ public class LoaderScript : MonoBehaviour
                 break; //2017.01.30 DD 芋連打を風船連打扱いに
             case "F":
                 result = 15;
-                break;
-            case "J":
-                result = 19;
-                break;
-            case "K":
-                result = 20;
-                break;
-            case "L":
-                result = 21;
-                break;
-            case "M":
-                result = 22;
                 break;
         }
         return result;
@@ -2057,7 +1781,7 @@ public class LoaderScript : MonoBehaviour
                 {
                     chips.Add(1);
                     bool inserted = false;
-                    foreach (ChapterLine script in lines)
+                    foreach (ChapterLine script in Lines)
                     {
                         if (script.Chapter == current_chapter_index)
                         {
@@ -2067,57 +1791,20 @@ public class LoaderScript : MonoBehaviour
                     }
                     if (!inserted)
                     {
-                        if (GameSetting.Mode != CommonClass.PlayMode.Replay)
-                        {
-                            ChapterLine script = new ChapterLine();
-                            script.Chapter = current_chapter_index;
-                            script.Bpm = dbNowBPM;
+                        ChapterLine script = new ChapterLine();
+                        script.Chapter = current_chapter_index;
+                        script.Bpm = dbNowBPM;
 
-                            float speed = (int)GameSetting.Config.Speed;
-                            if (speed > 10) speed /= 10;
+                        float speed = 1;
+                        if (speed > 10) speed /= 10;
 
-                            script.Scroll = dbNowScroll * speed;
+                        script.Scroll = dbNowScroll * speed;
 
-                            script.JudgeTime = (float)this.dbNowTime + nOFFSET;
-                            script.AppearTime = (float)(this.AppearTime * 1000.0);
-                            script.MoveTime = (float)(this.WaitingTime * 1000.0);
-                            script.WaitingTime = (int)(this.WaitingTime * 1000.0);
-                            lines.Add(script);
-
-                            if (ai_battle || GameSetting.Mode == CommonClass.PlayMode.PlayWithReplay)
-                            {
-                                ChapterLine script2 = new ChapterLine();
-                                script2.Chapter = current_chapter_index;
-                                script2.Bpm = dbNowBPM;
-
-                                float speed2 = (int)config.Speed;
-                                if (speed2 > 10) speed2 /= 10;
-
-                                script2.Scroll = dbNowScroll * speed2;
-                                script2.JudgeTime = (float)this.dbNowTime + nOFFSET;
-                                script2.AppearTime = (float)(this.AppearTime * 1000.0);
-                                script2.MoveTime = (float)(this.WaitingTime * 1000.0);
-                                script2.WaitingTime = (int)(this.WaitingTime * 1000.0);
-                                lines_2p.Add(script2);
-                            }
-                        }
-                        else
-                        {
-                            ChapterLine script = new ChapterLine();
-                            script.Chapter = current_chapter_index;
-                            script.Bpm = dbNowBPM;
-
-                            float speed = (int)config.Speed;
-                            if (speed > 10) speed /= 10;
-
-                            script.Scroll = dbNowScroll * speed;
-
-                            script.JudgeTime = (float)this.dbNowTime + nOFFSET;
-                            script.AppearTime = (float)(this.AppearTime * 1000.0);
-                            script.MoveTime = (float)(this.WaitingTime * 1000.0);
-                            script.WaitingTime = (int)(this.WaitingTime * 1000.0);
-                            lines.Add(script);
-                        }
+                        script.JudgeTime = (float)this.dbNowTime + nOFFSET;
+                        script.AppearTime = (float)(this.AppearTime * 1000.0);
+                        script.MoveTime = (float)(this.WaitingTime * 1000.0);
+                        script.WaitingTime = (int)(this.WaitingTime * 1000.0);
+                        Lines.Add(script);
                     }
 
                     this.dbLastTime = this.dbNowTime;
@@ -2757,7 +2444,7 @@ public class LoaderScript : MonoBehaviour
             {
                 Type = CChip.CType.BRANCH_NOTICE,
                 //JudgeTime =  (int)(this.dbNowTime - ((15000.0 / this.dbNowBPM * (this.fNow_Measure_s / this.fNow_Measure_m)) * 16.0)) + this.nOFFSET,
-                JudgeTime = (int)lines.Find(t=>t.Chapter == from_chapter).JudgeTime,
+                JudgeTime = (int)Lines.Find(t=>t.Chapter == from_chapter).JudgeTime,
                 BranchIndex = this.n内部番号BRANCH1to,
                 StartChapter = current_chapter_index - 1
             };

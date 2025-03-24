@@ -45,7 +45,7 @@ Material:
     - _AlphaToMask: 0
     - _Blend: 0
     - _CastShadows: 0
-    - _Clip: 0.01
+    - _Clip: 0.5
     - _Cull: 2
     - _DstBlend: 0
     - _QueueControl: 1

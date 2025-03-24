@@ -1,17 +1,11 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
-using System.Linq;
+﻿using CommonClass;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Rendering;
 using Unity.Transforms;
-using UnityEngine;
 using UnityEngine.Rendering;
-using static CriWare.CriAtomExBeatSync;
-using static UnityEngine.RuleTile.TilingRuleOutput;
-using Random = Unity.Mathematics.Random;
 
 partial struct NoteSpawnSystem : ISystem
 {
@@ -26,83 +20,78 @@ partial struct NoteSpawnSystem : ISystem
     {
         Entity spawn = SystemAPI.GetSingletonEntity<NotesSpawn>();
         NotesSpawn note = SystemAPI.GetComponent<NotesSpawn>(spawn);
-        if (note.SpawnCount > 0)
+        if (note.Spawning && LoaderScript.Notes.Count > 0)
         {
-            Entity note_pre = note.NoteEntity; // 获取 `NotesSpawn` 组件中的预制体 Entity
-            for (int i = 0; i < note.SpawnCount; i++)
+            foreach (NoteChip chip in LoaderScript.Notes.Values)
             {
+
+
+                NoteMove move = new NoteMove
+                {
+                    Index = chip.Index,
+                    Type = chip.Type,
+                    Chapter = chip.Chapter,
+                    JudgeTime = chip.JudgeTime,
+                    MidTime = chip.MidTime,
+                    EndTime = chip.MidTime,
+                    BranchRelated = chip.BranchRelated,
+                    Branch = chip.Branch,
+                    Bpm = chip.Bpm,
+                    AppearTime = chip.AppearTime,
+                    MoveTime = chip.MoveTime,
+                    Scroll = chip.Scroll,
+                    WaitingTime = chip.WaitingTime,
+                    IsFixedSENote = chip.IsFixedSENote,
+                    Senote = chip.Senote,
+                    fBMSCROLLTime = chip.fBMSCROLLTime,
+                    Z_Value = chip.Z_Value,
+                };
+
+                //添加音符图片
+                Entity note_pre = Entity.Null; // 获取 `NotesSpawn` 组件中的预制体 Entity
+                switch (chip.Type)
+                {
+                    case 1:
+                        note_pre = note.DonImage;
+                        break;
+                    case 2:
+                        note_pre = (note.KaImage);
+                        break;
+                    case 3:
+                        note_pre = (note.BigDonImage);
+                        break;
+                    case 4:
+                        note_pre = (note.BigKaImage);
+                        break;
+                    case 5:
+                        note_pre = (note.RapidImage);
+                        break;
+                    case 6:
+                        note_pre = (note.BigRapidImage);
+                        break;
+                    case 7:
+                        note_pre = (note.BalloonImage);
+                        break;
+                }
                 Entity instance = state.EntityManager.Instantiate(note_pre);
 
                 state.EntityManager.AddComponent<Parent>(instance);
                 state.EntityManager.SetComponentData(instance, new Parent { Value = spawn });
                 state.EntityManager.SetComponentData(instance, new LocalTransform
                 {
-                    Position = new float3(0, 0, i * -0.000001f),
-                    Rotation = quaternion.identity,
-                    Scale = 1
-                });
-
-                //添加音符图片
-                Random rand = new(math.hash(new int2(1234, i))); // 确保唯一种子
-                int type = rand.NextInt(1, 8);
-                //type += 5;
-                //int type = 5;
-                Entity image = Entity.Null;
-                NoteMove move = new NoteMove { Type = type };
-                switch (type)
-                {
-                    case 1:
-                        image = state.EntityManager.Instantiate(note.DonImage);
-                        break;
-                    case 2:
-                        image = state.EntityManager.Instantiate(note.KaImage);
-                        break;
-                    case 3:
-                        image = state.EntityManager.Instantiate(note.BigDonImage);
-                        break;
-                    case 4:
-                        image = state.EntityManager.Instantiate(note.BigKaImage);
-                        break;
-                    case 5:
-                        {
-                            image = state.EntityManager.Instantiate(note.RapidImage);
-                            move.JudgeTime = 3000;
-                            move.EndTime = 3500;
-                            move.Bpm = 60;
-                            move.Scroll = 2;
-                        }
-                        break;
-                    case 6:
-                        {
-                            image = state.EntityManager.Instantiate(note.BigRapidImage);
-                            move.JudgeTime = 3000;
-                            move.EndTime = 3200;
-                            move.Bpm = 60;
-                            move.Scroll = 2;
-                        }
-                        break;
-                    case 7:
-                        image = state.EntityManager.Instantiate(note.BalloonImage);
-                        break;
-                }
-                state.EntityManager.SetComponentData(instance, move);
-                state.EntityManager.AddComponent<Parent>(image);
-                state.EntityManager.SetComponentData(image, new Parent { Value = instance });
-                state.EntityManager.SetComponentData(image, new LocalTransform
-                {
                     Position = new float3(0, 0, 0),
                     Rotation = quaternion.identity,
                     Scale = 1
                 });
+                state.EntityManager.SetComponentData(instance, move);
             }
             SystemAPI.SetComponent(spawn, new NotesSpawn
             {
-                NoteEntity = note.NoteEntity,
                 DonImage = note.DonImage,
                 KaImage = note.KaImage,
                 BigDonImage = note.BigDonImage,
                 BigKaImage = note.BigKaImage,
-                SpawnCount = 0,
+                Spawning = false,
                 SetSeNote = true,        //因为刚刚生成entity，可能子组件的SeNoteImage还未生成，因此生成senote的步骤放到下一帧
                 Rapid = false,
             });
@@ -111,7 +100,6 @@ partial struct NoteSpawnSystem : ISystem
         {
             EntityQuery entityQuery = SystemAPI.QueryBuilder().WithAll<Parent, SeNoteImage, MaterialMeshInfo> ().Build();
             int count = entityQuery.CalculateEntityCount();
-
 
             NativeArray<NoteMove> Array = new(count, Allocator.TempJob);
             NativeArray<BatchMaterialID> Ids = new(PicsControllScript.BatchMaterials.Count, Allocator.TempJob);
@@ -135,44 +123,13 @@ partial struct NoteSpawnSystem : ISystem
             state.Dependency = Array.Dispose(state.Dependency);
             state.Dependency = Ids.Dispose(state.Dependency);
 
-            //foreach (var (parent, image, entity) in SystemAPI.Query<RefRO<Parent>, RefRO<SeNoteImage>>().WithEntityAccess())
-            //{
-            //    NoteImageChange move = SystemAPI.GetComponent<NoteImageChange>(parent.ValueRO.Value);
-            //    SpriteRenderer sprite = state.EntityManager.GetComponentObject<SpriteRenderer>(entity);
-            //    switch (move.Type)
-            //    {
-            //        case 1:
-            //            sprite.sprite = PicsControllScript.SeSprite[0];
-            //            break;
-            //        case 2:
-            //            sprite.sprite = PicsControllScript.SeSprite[4];
-            //            break;
-            //        case 3:
-            //            sprite.sprite = PicsControllScript.SeSprite[3];
-            //            break;
-            //        case 4:
-            //            sprite.sprite = PicsControllScript.SeSprite[6];
-            //            break;
-            //        case 5:
-            //            sprite.sprite = PicsControllScript.SeSprite[7];
-            //            break;
-            //        case 6:
-            //            sprite.sprite = PicsControllScript.SeSprite[8];
-            //            break;
-            //        case 7:
-            //            sprite.sprite = PicsControllScript.SeSprite[9];
-            //            break;
-            //    }
-            //}
-
             SystemAPI.SetComponent(spawn, new NotesSpawn
             {
-                NoteEntity = note.NoteEntity,
                 DonImage = note.DonImage,
                 KaImage = note.KaImage,
                 BigDonImage = note.BigDonImage,
                 BigKaImage = note.BigKaImage,
-                SpawnCount = 0,
+                Spawning = false,
                 SetSeNote = false,
                 Rapid = true
             });
@@ -239,15 +196,17 @@ partial struct NoteSpawnSystem : ISystem
 
             SystemAPI.SetComponent(spawn, new NotesSpawn
             {
-                NoteEntity = note.NoteEntity,
                 DonImage = note.DonImage,
                 KaImage = note.KaImage,
                 BigDonImage = note.BigDonImage,
                 BigKaImage = note.BigKaImage,
-                SpawnCount = 0,
+                Spawning = false,
                 SetSeNote = false,
                 Rapid = false,
             });
+
+            Entity controller = SystemAPI.GetSingletonEntity<NoteMoveControll>();
+            SystemAPI.SetComponent(controller, new NoteMoveControll { Reset = true, Ready =false, Playing = false });
         }
     }
 }
@@ -265,10 +224,11 @@ public partial struct SetSeNoteJob : IJobEntity
         switch (move.Type)
         {
             case 1:
-                info.MaterialID = Ids[0];
+                info.MaterialID = Ids[move.Senote <= 3 ? move.Senote : 0];
                 break;
             case 2:
-                info.MaterialID = Ids[4];
+                int i = math.max(move.Senote + 1, 4);
+                info.MaterialID = Ids[i <= 6 ? i : 4];
                 break;
             case 3:
                 info.MaterialID = Ids[3];
@@ -280,7 +240,7 @@ public partial struct SetSeNoteJob : IJobEntity
                 info.MaterialID = Ids[7];
                 break;
             case 6:
-                info.MaterialID = Ids[8];
+                info.MaterialID = Ids[10];
                 break;
             case 7:
                 info.MaterialID = Ids[11];

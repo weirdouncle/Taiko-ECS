@@ -12,9 +12,11 @@ public class SoundPool : MonoBehaviour
     private string don_acb_cuename;
     private string ka_acb_cuename;
     private string scene;
+    public static SoundPool Instance;
 
     void Start()
     {
+        Instance = this;
         DelayInit().Forget();
     }
 

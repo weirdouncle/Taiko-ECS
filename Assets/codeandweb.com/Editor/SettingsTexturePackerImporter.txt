@@ -1,7 +1,7 @@
 version: 2
 tpsheetFileNames:
 - Assets/codeandweb.com/Example/SpriteSheet/sprites.tpsheet
-- Assets/Resources/Texture/senotes.tpsheet
+- Assets/Resources/Texture/senote.tpsheet
 - Assets/Textures/DifficultiesNijiiro.tpsheet
 - Assets/Textures/lane.tpsheet
 - Assets/Textures/localization.tpsheet

@@ -308,7 +308,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &96696998
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2544,6 +2544,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1184778772}
+  - component: {fileID: 1184778773}
   m_Layer: 0
   m_Name: Load
   m_TagString: Untagged
@@ -2566,6 +2567,35 @@ Transform:
   m_Children: []
   m_Father: {fileID: 53359865}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1184778773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1184778770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbee9ed5b9ebf0443a13fc9d056f8bb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SongTja: {fileID: 4900000, guid: bc01cd1293423034eb345ddafbfc9dcb, type: 3}
+  NormalDon_pre: {fileID: 0}
+  NormalKa_pre: {fileID: 0}
+  BigDon_pre: {fileID: 0}
+  BigKa_pre: {fileID: 0}
+  Rapid_pre: {fileID: 0}
+  BigRapid_pre: {fileID: 0}
+  Ballon_pre: {fileID: 0}
+  Kusudama_pre: {fileID: 0}
+  Hammer_pre: {fileID: 0}
+  ChapterLine_pre: {fileID: 0}
+  RollingNote_pres: []
+  NoteParent: {fileID: 0}
+  Note2PParent: {fileID: 0}
+  ChapterLineParent: {fileID: 0}
+  ChapterLine2PParent: {fileID: 0}
+  _notesAddingScript: {fileID: 1808457006}
 --- !u!1 &1193559736
 GameObject:
   m_ObjectHideFlags: 0
@@ -3780,7 +3810,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97a1719b35906974c910e706ef7313ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Count: 10000
+  musicLoaderScript: {fileID: 1898052057}
   Note_pres:
   - {fileID: 2135214599006522420, guid: 59279f037bfe00e44a1e53de1e8e7b58, type: 3}
   - {fileID: 2135214599006522420, guid: c03ad8428f707cc42a15fb9cfab782f1, type: 3}
@@ -3952,6 +3982,7 @@ GameObject:
   - component: {fileID: 1898052055}
   - component: {fileID: 1898052054}
   - component: {fileID: 1898052056}
+  - component: {fileID: 1898052057}
   m_Layer: 0
   m_Name: SoundPool
   m_TagString: Untagged
@@ -4007,6 +4038,19 @@ MonoBehaviour:
   dspBusSetting: 
   dontDestroyOnLoad: 0
   dontRemoveExistsCueSheet: 0
+--- !u!114 &1898052057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1898052053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78a77728eace79041b260c678929ccd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Music: {fileID: 4900000, guid: c63f28a5ae093ec4fb76a05beae9b6a9, type: 3}
 --- !u!1 &1916713063
 GameObject:
   m_ObjectHideFlags: 0
@@ -4275,7 +4319,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1993129343
 RectTransform:
   m_ObjectHideFlags: 0

@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class NotesSpawnAuthoring : MonoBehaviour
 {
-    public GameObject Note_pre;
     public GameObject NoteDon_pre;
     public GameObject NoteKa_pre;
     public GameObject NoteBigDon_pre;
@@ -18,7 +17,6 @@ public class NotesSpawnAuthoring : MonoBehaviour
         public override void Bake(NotesSpawnAuthoring authoring)
         {
             Entity entity = GetEntity(TransformUsageFlags.Dynamic);
-            Entity prefabEntity = GetEntity(authoring.Note_pre, TransformUsageFlags.Dynamic);
             Entity don = GetEntity(authoring.NoteDon_pre, TransformUsageFlags.Dynamic);
             Entity ka = GetEntity(authoring.NoteKa_pre, TransformUsageFlags.Dynamic);
             Entity big_don = GetEntity(authoring.NoteBigDon_pre, TransformUsageFlags.Dynamic);
@@ -30,7 +28,6 @@ public class NotesSpawnAuthoring : MonoBehaviour
 
             AddComponent(entity, new NotesSpawn
             {
-                NoteEntity = prefabEntity,
                 DonImage = don,
                 KaImage = ka,
                 BigDonImage = big_don,
@@ -49,7 +46,6 @@ public class NotesSpawnAuthoring : MonoBehaviour
 
 public struct NotesSpawn : IComponentData
 {
-    public Entity NoteEntity;
     public Entity DonImage;
     public Entity KaImage;
     public Entity BigDonImage;
@@ -58,7 +54,7 @@ public struct NotesSpawn : IComponentData
     public Entity BigRapidImage;
     public Entity BalloonImage;
     public Entity KusudamaImage;
-    public int SpawnCount;
+    public bool Spawning;
     public bool SetSeNote;
     public bool Rapid;
 }

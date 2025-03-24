@@ -70,4 +70,15 @@ public struct NoteMove : IComponentData
     public bool IsFixedSENote;
     public int Senote;
     public float fBMSCROLLTime;
+    public float Z_Value;
+    public HitNoteResult NoteJudgeState;
+    public bool Disable;
+    public enum HitNoteResult
+    {
+        Bad,
+        Good,
+        Perfect,
+        None,
+        Lost,
+    }
 }

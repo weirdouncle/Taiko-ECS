@@ -668,6 +668,7 @@ namespace CommonClass
         public int Senote { set; get; }
         public bool Gogo { set; get; }
         public float fBMSCROLLTime { set; get; }
+        public float Z_Value { set; get; }
 
         public NoteChip Copy()
         {
@@ -1159,7 +1160,7 @@ namespace CommonClass
                 System.Runtime.InteropServices.Marshal.Copy(data.Data, (int)(len1 / sizeof(float)), ptr2, (int)(len2 / sizeof(float)));
             }
             result = sound.unlock(ptr1, ptr2, len1, len2);
-            result = sound.setMode(MODE.LOOP_NORMAL);
+            result = sound.setMode(MODE.DEFAULT);
             return sound;
         }
 
