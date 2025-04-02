@@ -7,6 +7,7 @@ using Unity.Rendering;
 using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.Rendering;
+using static UnityEngine.EventSystems.EventTrigger;
 
 partial struct NoteSpawnSystem : ISystem
 {
@@ -23,6 +24,7 @@ partial struct NoteSpawnSystem : ISystem
         NotesSpawn note = SystemAPI.GetComponent<NotesSpawn>(spawn);
         if (note.Spawning && LoaderScript.Notes.Count > 0)
         {
+            int index = 3000;
             foreach (NoteChip chip in LoaderScript.Notes.Values)
             {
                 NoteMove move = new NoteMove
@@ -84,6 +86,13 @@ partial struct NoteSpawnSystem : ISystem
                     Scale = 1
                 });
                 state.EntityManager.SetComponentData(instance, move);
+
+                DynamicBuffer<LinkedEntityGroup> linkedEntities = state.EntityManager.GetBuffer<LinkedEntityGroup>(instance);
+                foreach (var child in linkedEntities)
+                {
+                    if (SystemAPI.HasComponent<RenderQueueMaterial>(child.Value)) SystemAPI.SetComponent(child.Value, new RenderQueueMaterial { Queue = index });
+                }
+                index++;
             }
             SystemAPI.SetComponent(spawn, new NotesSpawn
             {
@@ -95,6 +104,7 @@ partial struct NoteSpawnSystem : ISystem
                 SetSeNote = true,        //因为刚刚生成entity，可能子组件的SeNoteImage还未生成，因此生成senote的步骤放到下一帧
                 Rapid = false,
             });
+
         }
         else if (note.SetSeNote)
         {

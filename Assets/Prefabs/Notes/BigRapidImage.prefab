@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2307655246925763526}
   - component: {fileID: 776777366352779932}
   - component: {fileID: 318314716251517732}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -112,7 +112,7 @@ GameObject:
   - component: {fileID: 2947423084236917884}
   - component: {fileID: 7239515704361395876}
   - component: {fileID: 1014622777350699886}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: BigRapidImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -213,7 +213,7 @@ GameObject:
   - component: {fileID: 2044229175494750756}
   - component: {fileID: 8346421108769031322}
   - component: {fileID: 2681327705328242822}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: SeNote
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -296,7 +296,7 @@ GameObject:
   - component: {fileID: 7108906303813599979}
   - component: {fileID: 3065478352247206222}
   - component: {fileID: 6236835499310665312}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: Tail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -380,7 +380,7 @@ GameObject:
   - component: {fileID: 8096957878291196527}
   - component: {fileID: 3160291018913915157}
   - component: {fileID: 1190607283495233769}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: SeNote
   m_TagString: Untagged
   m_Icon: {fileID: 0}

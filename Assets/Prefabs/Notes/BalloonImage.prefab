@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3473136294317179695}
   - component: {fileID: 4893112735010480939}
   - component: {fileID: 7969193305844314966}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: BalloonImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -112,7 +112,7 @@ GameObject:
   - component: {fileID: 9037634488809587093}
   - component: {fileID: 3530577918761646310}
   - component: {fileID: 7425382966663401987}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: Tail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -128,8 +128,8 @@ Transform:
   m_GameObject: {fileID: 8957154743584254342}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.39974225, y: -0.020618536, z: 0}
-  m_LocalScale: {x: 0.7319587, y: 0.4896907, z: 1}
+  m_LocalPosition: {x: 0.39974225, y: -0.021134024, z: 0}
+  m_LocalScale: {x: 0.7319586, y: 0.47422677, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 202676643511971082}

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 251919360813526871}
   - component: {fileID: 7212714117202044857}
   - component: {fileID: 7946880478361699019}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: KaImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -22,6 +22,10 @@ public class NoteImageChangeArthoring : MonoBehaviour
             {
                 Frame = 0,
             });
+            AddComponent(entity, new RenderQueueMaterial
+            {
+                Queue = 3000,
+            });
         }
     }
 }
@@ -37,4 +41,10 @@ public struct NoteImageChange : IComponentData
 public struct ArrayFrameMaterial : IComponentData
 {
     public float Frame;
+}
+
+[MaterialProperty("RenderQueue")]
+public struct RenderQueueMaterial : IComponentData
+{
+    public float Queue;
 }

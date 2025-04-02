@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1929678929148238243}
   - component: {fileID: 6563094161987990728}
   - component: {fileID: 4786731412749727759}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: BigkaImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}

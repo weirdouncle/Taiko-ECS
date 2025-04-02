@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5441198096469837821}
   - component: {fileID: 5467280436887887371}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: NoteRapid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -75,7 +75,7 @@ GameObject:
   - component: {fileID: 5546287868389368797}
   - component: {fileID: 1714606306241035843}
   - component: {fileID: 7757747940924833477}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: MainSeNote
   m_TagString: Untagged
   m_Icon: {fileID: 0}
